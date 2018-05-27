@@ -13,7 +13,7 @@ require("./config/passport")(passport);
 app.use(session({
     secret: '__AvGenRate__',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: false
 }));
 
 app.use(passport.initialize())
@@ -29,7 +29,7 @@ const port = process.env.PORT || 3000
 app
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
-    .use('/', require("express").static('assests'));
+    .use('/assests', require("express").static(path.join(__dirname, 'assests')))
 
 const server = app.listen(port);
 const socket = io(server);
