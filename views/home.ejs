@@ -120,13 +120,16 @@ button{
     let hold = document.getElementById("output");
     let _msg = document.getElementById("msg");
     let feedback = document.getElementById("fb");
-    btn.disabled = true
     btn.addEventListener('click',function(){
       let msg = document.getElementById("msg").value;
       let usr = document.getElementById("usr").innerHTML
       feedback.innerHTML = ""
-      btn.disabled = true
-      sock.emit('msg',{msg,usr});
+      if (msg.length == 0) {
+          return false
+      } else {
+        sock.emit('msg',{msg,usr});
+      }
+      
     });
     sock.on("msg",(data)=>{
       _msg.value = ""
@@ -141,8 +144,7 @@ button{
     hold.appendChild(div)
     });
 
-    _msg.addEventListener("keypress",()=>{
-      btn.disabled = false
+    _msg.addEventListener("keyup",()=>{
       let usr = document.getElementById("usr").innerHTML
       sock.emit("typing",usr);
     });
@@ -154,14 +156,4 @@ button{
 
 </script>
 </body>
-<script>
-    function toggle() {
-    var x = document.getElementById("myTopnav");
-    if (x.className === "topnav") {
-        x.className += " responsive";
-    } else {
-        x.className = "topnav";
-    }
-}
-</script>
 </html>
