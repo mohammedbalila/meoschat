@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+<style>
+  body{
+    font-family: 'Nunito';
+}
+
+h2{
+    font-size: 18px;
+    padding: 10px 20px;
+    color: #575ed8;
+}
+
+.chat-box{
+    max-width: 600px;
+    margin: 30px auto;
+    border: 1px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 2px;
+}
+
+.chat-window{
+    height: 400px;
+    overflow: auto;
+    background: #f9f9f9;
+}
+
+.output p{
+    padding: 14px 0px;
+    margin: 0 20px;
+    border-bottom: 1px solid #e9e9e9;
+    color: #555;
+}
+
+.feedback p{
+    color: #aaa;
+    padding: 14px 0px;
+    margin: 0 20px;
+}
+
+.output strong{
+    color: #111;
+}
+
+label{
+    box-sizing: border-box;
+    display: block;
+    padding: 10px 20px;
+}
+
+input{
+    padding: 10px 20px;
+    box-sizing: border-box;
+    background: #eee;
+    border: 0;
+    display: block;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    font-family: Nunito;
+    font-size: 16px;
+}
+
+button{
+    background: #575ed8;
+    color: #fff;
+    font-size: 18px;
+    border: 0;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 0 0 2px 2px;
+}
+.message{
+  border: 1px solid grey;
+  border-radius: 8px;
+  margin-top: 1%;
+  display: grid;
+  grid-template-columns: 0.2fr 2fr;
+}
+.message p {  color: white;}
+</style>
+<title>Safo blog</title>
+</head>
+<body>
+
+    <nav class="navbar navbar-light bg-dark">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <strong><a href="/" class="nav-link " id="usr" style="color: white;text-decoration: none"><%= username %></a></strong>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link " href="/logout" style="color: white;text-decoration: none">Logout</a>
+              </li>
+            </ul>
+      </nav>
+      
+      <div class="container mario-chat">
+          <h2>Chat Room</h2>
+          <div class="chat-window">
+              <section class="output" id="output"></section>
+              <div class="feedback" id="fb"></div>
+          </div>
+          <input id="msg" type="text" placeholder="Message" />
+          <button id="btn">Send</button>
+      </div>
+<script>
+    let sock = io();
+    let btn = document.getElementById("btn");
+    let hold = document.getElementById("output");
+    let _msg = document.getElementById("msg");
+    let feedback = document.getElementById("fb");
+    btn.disabled = true
+    btn.addEventListener('click',function(){
+      let msg = document.getElementById("msg").value;
+      let usr = document.getElementById("usr").innerHTML
+      feedback.innerHTML = ""
+      btn.disabled = true
+      sock.emit('msg',{msg,usr});
+    });
+    sock.on("msg",(data)=>{
+      _msg.value = ""
+    let div = document.createElement("div");
+    let p = document.createElement("p");
+    let name = document.createElement("strong");
+    name.innerHTML = data.usr;
+    p.innerHTML = data.msg
+    div.appendChild(name);
+    div.appendChild(p);
+    div.setAttribute("class","container bg-primary message");
+    hold.appendChild(div)
+    });
+
+    _msg.addEventListener("keypress",()=>{
+      btn.disabled = false
+      let usr = document.getElementById("usr").innerHTML
+      sock.emit("typing",usr);
+    });
+
+    sock.on("typing",(data)=>{
+      console.log(data)
+    feedback.innerHTML = `${data} is typing...`
+    });
+
+</script>
+</body>
+<script>
+    function toggle() {
+    var x = document.getElementById("myTopnav");
+    if (x.className === "topnav") {
+        x.className += " responsive";
+    } else {
+        x.className = "topnav";
+    }
+}
+</script>
+</html>
