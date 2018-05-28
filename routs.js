@@ -7,6 +7,7 @@ const session = require("express-session")
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 const mongoose = require("mongoose")
+const Message = require("./message")
 mongoose.connect(require("./config/db"))
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
@@ -14,10 +15,15 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 router.get("/",authenticatedMiddleWare(),(req,res,next)=>{
+    Message.find({},(err,docs)=>{
     let username = req.user.username
-    res.render("home",{username:username})
+    // console.log(d)
+    // let doc = docs.slice(docs.length - docs.length + 10, docs.length)
+    // let _doc = docs
+    
+    res.render("home",{username:username,docs:docs})
 });
-
+})
 router.get("/login",(req,res)=>{
     res.render("login")
 });

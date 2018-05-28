@@ -97,7 +97,14 @@ button{
           <h2>Chat Room</h2>
           <div class="chat-window panel-body">
 
-              <section class="output" id="output"></section>
+              <section class="output" id="output">
+                <% for (doc of docs) { %> 
+                  <div class="container bg-info message">
+                    <strong> <%= doc.auther %></strong>
+                    <p><%= doc.body %></p>
+                  </div>
+                  <% } %>
+              </section>
               <div class="feedback" id="fb"></div>
           </div>
           <input id="message" type="text" placeholder="Message" />
@@ -117,6 +124,7 @@ button{
       let msg = document.getElementById("message").value;
       let usr = document.getElementById("usr").innerHTML
       feedback.innerHTML = ""
+      _msg.value = ""
       if (msg.length == 0) {
           return false
       } else {
@@ -147,33 +155,33 @@ button{
       console.log(data)
     feedback.innerHTML = `${data} is typing...`
     });
-    sock.on('old is gold',(docs)=>{
-        console.log(docs)
-        for (let doc of docs) {
-        loadMessage(doc)
-                .then((div)=>{
-            hold.appendChild(div)
-        })
-        }
-    })
-function loadMessage(data)
-{
-        return new Promise((res,rej)=>{
-        let div = document.createElement("div");
-        let p = document.createElement("p");
-        let span = document.createElement("span");
-        let name = document.createElement("strong");
-        name.innerHTML = data.auther
-        p.innerHTML = data.body
-        span.innerHTML = data.date
-        div.appendChild(name);
-        div.appendChild(p);
-        div.setAttribute("class","container bg-info message");
-        div.setAttribute('id','msg')
-        res(div)
-        rej(null)
-    })
-}
+    // sock.on('old is gold',(docs)=>{
+    //     console.log(docs)
+    //     for (let doc of docs) {
+    //     loadMessage(doc)
+    //             .then((div)=>{
+    //         hold.appendChild(div)
+    //     })
+    //     }
+    // })
+// function loadMessage(data)
+// {
+//         return new Promise((res,rej)=>{
+//         let div = document.createElement("div");
+//         let p = document.createElement("p");
+//         let span = document.createElement("span");
+//         let name = document.createElement("strong");
+//         name.innerHTML = data.auther
+//         p.innerHTML = data.body
+//         span.innerHTML = data.date
+//         div.appendChild(name);
+//         div.appendChild(p);
+//         div.setAttribute("class","container bg-info message");
+//         div.setAttribute('id','msg')
+//         res(div)
+//         rej(null)
+//     })
+// }
 </script>
 </body>
 </html>

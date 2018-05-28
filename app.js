@@ -47,9 +47,6 @@ let users = []
 socket.on("connection", (instance) => {
     users.push(instance.id)
     instance.emit('users_connected',users.length)
-    Message.find({},(err,docs)=>{
-        socket.emit('old is gold',docs)
-    })
     instance.on("message", (data) => {
         socket.sockets.emit("msg", data);
         return new Promise((resolve,reject)=>{
