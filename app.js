@@ -3,17 +3,27 @@ const app = require("express")();
 const routs = require("./routs")
 const path = require('path')
 let User = require("./user")
+let Message = require("./message")
 const io = require("socket.io");
 const passport = require("passport")
 const bcrypt = require("bcryptjs")
 const session = require("express-session")
+const MongoDBSession = require("connect-mongodb-session")(session)
 // const flash = require("flash-messages")
 require("./config/passport")(passport);
 
+const store = new MongoDBSession({
+    uri:require("./config/db"),
+    database:'komwledge_stream',
+    collection: 'Sessions'
+})
 app.use(session({
     secret: '__AvGenRate__',
     resave: true,
-    saveUninitialized: false
+    secret: 'eg[isfd-8yF9-7w2315df{}+Ijsli;;to8',
+    store:store,
+    saveUninitialized: true
+
 }));
 
 app.use(passport.initialize())
@@ -33,15 +43,34 @@ app
 
 const server = app.listen(port);
 const socket = io(server);
-
+let users = []
 socket.on("connection", (instance) => {
-
-    instance.on("msg", (data) => {
+    users.push(instance.id)
+    instance.emit('users_connected',users.length)
+    Message.find({},(err,docs)=>{
+        socket.emit('old is gold',docs)
+    })
+    instance.on("message", (data) => {
         socket.sockets.emit("msg", data);
+        return new Promise((resolve,reject)=>{
+        const msg = new Message({auther:data.user,body:data.message})
+        resolve(msg)
+        }).then((msg)=>{
+            msg.save((err)=>{
+            if (err) throw err;
+            console.log('saved')
+        })
+        }).catch((err)=>{
+            if (err) throw err
+        })
     });
 
     instance.on("typing", (data) => {
         instance.broadcast.emit("typing", data);
     });
+    instance.on('disconnect',(socket_)=>{
+        users.pop(instance.id)
+        instance.emit('users_connected',users.length)
+    })
 
 });

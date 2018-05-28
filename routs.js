@@ -63,8 +63,8 @@ router.post("/register",(req,res)=>{
 
 router.use(session({
     secret: '__AvGenRate__',
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
   }));
 
 function authenticatedMiddleWare() {

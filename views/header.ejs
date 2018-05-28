@@ -1,0 +1,156 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.dev.js.map"></script>
+<style>
+    body {
+        transition: all .8s ease-out;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 1em;
+    }
+
+    .top-list {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        list-style-type: none;
+        width: 100%;
+        background-color: black;
+        padding: 0;
+        margin: 0;
+    }
+
+    .top-list a {
+        text-decoration: none;
+        color: white;
+        float: left;
+        width: 10%;
+        margin: 1em;
+    }
+
+    .top-list li:hover {
+        color: black;
+        background-color: slategray;
+        transition: all .8s ease-out;
+    }
+
+    .side-bar {
+        list-style: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        padding: 0;
+        margin: 0;
+        width: 0px;
+        height: 100%;
+        opacity: 0.9;
+        display: none;
+    }
+
+    .side-bar a {
+        display: block;
+        text-decoration: none;
+        color: antiquewhite;
+        padding: 8px;
+    }
+
+    .side-bar li:hover {
+        background-color: rgb(62, 157, 201);
+        color: #111;
+        transition: all .8s ease-out;
+    }
+
+    .side-list {
+        display: grid;
+        grid-template-rows: repeat(1, 1fr);
+        grid-row-gap: 1em;
+        list-style-type: none;
+        width: 20%;
+        height: 100%;
+        background-color: #111;
+        opacity: .9;
+
+    }
+
+    .btn-dark {
+        border: 1px solid white;
+    }
+    #message:hover, #message:focus{
+        background-color: white;
+    }
+</style>
+<nav>
+    <ul class="top-list" id="top">
+        <li onclick="openSideBar()">
+            <a style="font-size:20px;color: #ffffff" id="icon"> &#9776; </a>
+        </li>
+    </ul>
+    <ul class="side-bar">
+        <li>
+            <a href="#" class="nav-link" onclick="closeSideBar()" style="font-size:.3in;color:red">
+                <b>&times; </b>
+            </a>
+        </li>
+        <li class="nav-item">
+            <strong>
+                <a href="/" class="nav-link " id="usr" style="color: white;text-decoration: none">
+                    <%= username %>
+                </a>
+            </strong>
+        </li>
+        <li>
+            <a href="/logout">Logout</a>
+        </li>
+        <li onclick="nightMode()" id="night">
+            <a style="color: white">Night mode</a>
+        </li>
+        <li onclick="lightMode()">
+            <a style="color: white">Light mode</a>
+        </li>
+        <li>
+         <a class="nav-link" style="color: white">
+         Conneted users <span id="usrsNum" class="badge"></span>
+        </a>
+        </li>
+    </ul>
+</nav>
+<br>
+<script>
+    function openSideBar() {
+        let x = document.querySelector(".side-bar")
+        x.style.display == 'none'
+        document.querySelector(".side-bar").style.display = 'block';
+        document.querySelector(".side-bar").style.width = '200px';
+        document.querySelector(".side-bar").style.transition = 'all .5s ease-out';
+        document.querySelector(".mario-chat").style.marginLeft = '200px'
+        document.querySelector(".mario-chat").style.transition = 'all .5s ease-out';
+    }
+    function closeSideBar() {
+        document.querySelector(".side-bar").style.display = 'none';
+        document.querySelector(".side-bar").style.width = '0';
+        document.querySelector(".mario-chat").style.marginLeft = 'auto'
+    }
+
+    function nightMode()
+    {
+
+        document.body.style.backgroundColor = '#111111'
+        document.getElementById('btn').style.backgroundColor = '#111111'
+        document.getElementById('btn').setAttribute('class','btn-dark')
+        document.getElementById('top').style.backgroundColor = '#ffffff'
+        document.getElementById('icon').style.color = '#111111'
+        document.getElementById('msg').style.backgroundColor = '#111111'
+        document.getElementById('msg').style.color = '#ffffff'
+        document.getElementById("message").style.backgroundColor = 'grey'
+
+    }
+    function lightMode()
+    {
+        document.body.style.backgroundColor = '#ffffff'
+        document.getElementById('btn').style.backgroundColor = '#575ed8'
+        document.getElementById('btn').removeAttribute('class')
+        document.getElementById('top').style.backgroundColor = '#111111'
+        document.getElementById('icon').style.color = '#ffffff'
+        document.getElementById('msg').style.backgroundColor = '#111111'
+        document.getElementById('msg').style.color = '#111111'
+        document.getElementById("message").style.backgroundColor = '#ffffff'
+
+    }
+</script>

@@ -5,15 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<!-- <link rel="stylesheet" type="text/css" href="/assests/bootstrap.min.css"> -->
+	<script src="assests/particles.min.js"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
 	 crossorigin="anonymous">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
 	 crossorigin="anonymous">
+	 <link rel="stylesheet" href="assests/partical.css" type="text/css">
 	 <style>span {color: red;}</style>
-	 <link rel="shortcut icon" href="/assests/bg.png" type="image/png">
+	 <link rel="shortcut icon" href="assests/bg.png" type="image/png">
 	<title>Register</title>
 </head>
-<body>
+
+<body id="particles-js">
+	<div >
 	<form class="card m-3" method="POST" action="/register">
 		<center><span style="color: red"></span></center>
 		<div class="form-group p-2">
@@ -39,8 +43,9 @@
 		<button type="submit" class="btn btn-primary" style="margin: 5px;" id="btn">Submit</button>
 		<a href="/" class="btn-danger" style="padding: 12px;margin: 5px;text-align: center">Already registered - (Login)</a>
 	</form>
-
+</div>
 </body>
+<script src="assests/partical-js.js"></script>
 <script>
 		let username = document.querySelector("#username");
 		let password = document.querySelector("#InputPassword");

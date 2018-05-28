@@ -91,47 +91,40 @@ button{
 <title>Meos Chat</title>
 </head>
 <body>
-
-    <nav class="navbar navbar-light bg-dark">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <strong><a href="/" class="nav-link " id="usr" style="color: white;text-decoration: none"><%= username %></a></strong>
-            </li>
-          </ul>
-          <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link " href="/logout" style="color: white;text-decoration: none">Logout</a>
-              </li>
-            </ul>
-      </nav>
-      
-      <div class="container mario-chat">
+<% include header %>  
+<div class="panel-group">
+      <div class="container mario-chat panel panel-primary">
           <h2>Chat Room</h2>
-          <div class="chat-window">
+          <div class="chat-window panel-body">
+
               <section class="output" id="output"></section>
               <div class="feedback" id="fb"></div>
           </div>
-          <input id="msg" type="text" placeholder="Message" />
+          <input id="message" type="text" placeholder="Message" />
           <button id="btn">Send</button>
       </div>
+    </div>
 <script>
     let sock = io();
+    sock.on('users_connected',(users)=>{
+        document.getElementById('usrsNum').innerHTML = users
+    })
     let btn = document.getElementById("btn");
     let hold = document.getElementById("output");
-    let _msg = document.getElementById("msg");
+    let _msg = document.getElementById("message");
     let feedback = document.getElementById("fb");
     btn.addEventListener('click',function(){
-      let msg = document.getElementById("msg").value;
+      let msg = document.getElementById("message").value;
       let usr = document.getElementById("usr").innerHTML
       feedback.innerHTML = ""
       if (msg.length == 0) {
           return false
       } else {
-        sock.emit('msg',{msg,usr});
+        sock.emit('message',{message:msg,user:usr});
       }
       
     });
-    sock.on("msg",(data)=>{
+    sock.on("message",(data)=>{
       _msg.value = ""
     let div = document.createElement("div");
     let p = document.createElement("p");
@@ -141,9 +134,10 @@ button{
     div.appendChild(name);
     div.appendChild(p);
     div.setAttribute("class","container bg-info message");
+    div.setAttribute('id','msg')
     hold.appendChild(div)
     });
-
+    
     _msg.addEventListener("keyup",()=>{
       let usr = document.getElementById("usr").innerHTML
       sock.emit("typing",usr);
@@ -153,7 +147,33 @@ button{
       console.log(data)
     feedback.innerHTML = `${data} is typing...`
     });
-
+    sock.on('old is gold',(docs)=>{
+        console.log(docs)
+        for (let doc of docs) {
+        loadMessage(doc)
+                .then((div)=>{
+            hold.appendChild(div)
+        })
+        }
+    })
+function loadMessage(data)
+{
+        return new Promise((res,rej)=>{
+        let div = document.createElement("div");
+        let p = document.createElement("p");
+        let span = document.createElement("span");
+        let name = document.createElement("strong");
+        name.innerHTML = data.auther
+        p.innerHTML = data.body
+        span.innerHTML = data.date
+        div.appendChild(name);
+        div.appendChild(p);
+        div.setAttribute("class","container bg-info message");
+        div.setAttribute('id','msg')
+        res(div)
+        rej(null)
+    })
+}
 </script>
 </body>
 </html>
