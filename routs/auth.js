@@ -1,33 +1,23 @@
-const router = require("express")()
+const router = require("express").Router()
 const bycrypt = require("bcryptjs")
 const bodyParser = require("body-parser");
-const User = require("./user")
 const passport = require("passport")
 const session = require("express-session")
+const mongoose = require("mongoose")
+const db = mongoose.connection;
+const User = require('../models/user')
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
-const mongoose = require("mongoose")
-const Message = require("./message")
-mongoose.connect(require("./config/db"))
+
+mongoose.connect(require("../config/db"))
 mongoose.Promise = global.Promise;
-const db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-
-router.get("/",authenticatedMiddleWare(),(req,res,next)=>{
-    Message.find({},(err,docs)=>{
-    let username = req.user.username
-    // console.log(d)
-    // let doc = docs.slice(docs.length - docs.length + 10, docs.length)
-    // let _doc = docs
-    
-    res.render("home",{username:username,docs:docs})
-});
-})
 router.get("/login",(req,res)=>{
     res.render("login")
 });
-router.post("/login",passport.authenticate('local', { failureRedirect: '/login' }),(req,res)=>{
+router.post("/login",passport.authenticate('local', { failureRedirect: '/auth/login' }),(req,res)=>{
     res.redirect("/")
 })
 
@@ -46,10 +36,11 @@ router.post("/register",(req,res)=>{
     let username = req.body.username
     User.findOne({username:username},(err,uer)=>{
         if (uer) {
-            msg = "username is already taken"
+            req.flash("danger", "username is already taken")
+            res.redirect('/auth/register')
         } else {
             bycrypt.hash(password,10,(err,hash)=>{
-                if (err) throw Error()
+                if (err) console.log(err);throw Error()
                 let user = new User({
                     username:username,
                     email:email,
@@ -67,16 +58,26 @@ router.post("/register",(req,res)=>{
     });
 });
 
-router.use(session({
-    secret: '__AvGenRate__',
-    resave: false,
-    saveUninitialized: false
-  }));
+module.exports = router
+// var tagBody = '(?:[^"\'>]|"[^"]*"|\'[^\']*\')*';
 
-function authenticatedMiddleWare() {
-    return (req, res, next) => {
-        if (req.isAuthenticated()) return next();
-        res.redirect("/login");
-    }
-}
-module.exports = router;
+// var tagOrComment = new RegExp(
+//     '<(?:'
+//     // Comment body.
+//     + '!--(?:(?:-*[^->])*--+|-?)'
+//     // Special "raw text" elements whose content should be elided.
+//     + '|script\\b' + tagBody + '>[\\s\\S]*?</script\\s*'
+//     + '|style\\b' + tagBody + '>[\\s\\S]*?</style\\s*'
+//     // Regular name
+//     + '|/?[a-z]'
+//     + tagBody
+//     + ')>',
+//     'gi');
+// function removeTags(html) {
+//   var oldHtml;
+//   do {
+//     oldHtml = html;
+//     html = html.replace(tagOrComment, '');
+//   } while (html !== oldHtml);
+//   return html.replace(/</g, '&lt;');
+// }

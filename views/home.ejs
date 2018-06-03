@@ -1,187 +1,153 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
-crossorigin="anonymous">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
-crossorigin="anonymous">
-<link rel="shortcut icon" href="/assests/bg.png" type="image/png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-<style>
-  body{
-    font-family: 'Nunito';
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <% include header %>
+        <title>Home</title>
+        <style>
+            .wrapper {
+                display: grid;
+                grid-template-rows: 3fr 1fr;
+                grid-gap: .5em;
+            }
 
-h2{
-    font-size: 18px;
-    padding: 10px 20px;
-    color: #575ed8;
-}
+            .wrapper-2 {
+                display: grid;
+                grid-template-columns: .5fr 1fr;
+            }
 
-.chat-box{
-    max-width: 600px;
-    margin: 30px auto;
-    border: 1px solid #ddd;
-    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
-    border-radius: 2px;
-}
+            .center {
+                margin-left: auto;
+            }
 
-.chat-window{
-    height: 400px;
-    overflow: auto;
-    background: #f9f9f9;
-}
+            b {
+                position: absolute;
+                background-color: lightgray;
+                right: 0;
+                bottom: 0;
+            }
 
-.output p{
-    padding: 14px 0px;
-    margin: 0 20px;
-    border-bottom: 1px solid #e9e9e9;
-    color: #555;
-}
+            a {
+                text-decoration: none;
+                color: black;
+                display: inline-block;
 
-.feedback p{
-    color: #aaa;
-    padding: 14px 0px;
-    margin: 0 20px;
-}
+            }
 
-.output strong{
-    color: #111;
-}
-
-label{
-    box-sizing: border-box;
-    display: block;
-    padding: 10px 20px;
-}
-
-input{
-    padding: 10px 20px;
-    box-sizing: border-box;
-    background: #eee;
-    border: 0;
-    display: block;
-    width: 100%;
-    background: #fff;
-    border-bottom: 1px solid #eee;
-    font-family: Nunito;
-    font-size: 16px;
-}
-
-button{
-    background: #575ed8;
-    color: #fff;
-    font-size: 18px;
-    border: 0;
-    padding: 12px 0;
-    width: 100%;
-    border-radius: 0 0 2px 2px;
-}
-.message{
-  border: 1px solid grey;
-  border-radius: 8px;
-  margin-top: 1%;
-  display: grid;
-  grid-template-columns: 0.2fr 2fr;
-}
-.message p {  color: white;}
-</style>
-<title>Meos Chat</title>
+            a:hover {
+                color: white;
+                text-decoration: none;
+            }
+        </style>
 </head>
+
 <body>
-<% include header %>  
-<div class="panel-group">
-      <div class="container mario-chat panel panel-primary">
-          <h2>Chat Room</h2>
-          <div class="chat-window panel-body">
-
-              <section class="output" id="output">
-                <% for (doc of docs) { %> 
-                  <div class="container bg-info message">
-                    <strong> <%= doc.auther %></strong>
-                    <p><%= doc.body %></p>
-                  </div>
-                  <% } %>
-              </section>
-              <div class="feedback" id="fb"></div>
-          </div>
-          <input id="message" type="text" placeholder="Message" />
-          <button id="btn">Send</button>
-      </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <textarea name="post" id="post" class="form-control" placeholder="What's in your mind ..." style="resize: none"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="sendPost">Post</button>
+                    <input type="text" name="comment">
+                </div>
+            </div>
+        </div>
     </div>
-<script>
-    let sock = io();
-    sock.on('users_connected',(users)=>{
-        document.getElementById('usrsNum').innerHTML = users
-    })
-    let btn = document.getElementById("btn");
-    let hold = document.getElementById("output");
-    let _msg = document.getElementById("message");
-    let feedback = document.getElementById("fb");
-    btn.addEventListener('click',function(){
-      let msg = document.getElementById("message").value;
-      let usr = document.getElementById("usr").innerHTML
-      feedback.innerHTML = ""
-      _msg.value = ""
-      if (msg.length == 0) {
-          return false
-      } else {
-        sock.emit('message',{message:msg,user:usr});
-      }
-      
-    });
-    sock.on("message",(data)=>{
-      _msg.value = ""
-    let div = document.createElement("div");
-    let p = document.createElement("p");
-    let name = document.createElement("strong");
-    name.innerHTML = data.usr;
-    p.innerHTML = data.msg
-    div.appendChild(name);
-    div.appendChild(p);
-    div.setAttribute("class","container bg-info message");
-    div.setAttribute('id','msg')
-    hold.appendChild(div)
-    });
-    
-    _msg.addEventListener("keyup",()=>{
-      let usr = document.getElementById("usr").innerHTML
-      sock.emit("typing",usr);
-    });
+    <div class="container" id="hold">
+        <div class="row">
+            <% for (post of posts) { %>
+                <div class="col-xs-12 col-sm-12 col-md-8">
+                    <div class="container text-left">
+                        <h4 class="align-text-top text-info">
+                            <%= post.auther %>
+                        </h4>
+                        <a class="btn btn-default" href="/posts/:<%= post.id %>">
+                            <span class="fas fa-eye"></span>
+                        </a>
+                        <span style="font-family: Playfair Display;font-size: inherit;"> </span>
+                        <div class="well h5">
+                            <p><%= post.body %></p>
+                        </div>
+                        </div>
+                    </div>
+                    <br>
+                
+                <% } %>
 
-    sock.on("typing",(data)=>{
-      console.log(data)
-    feedback.innerHTML = `${data} is typing...`
-    });
-    // sock.on('old is gold',(docs)=>{
-    //     console.log(docs)
-    //     for (let doc of docs) {
-    //     loadMessage(doc)
-    //             .then((div)=>{
-    //         hold.appendChild(div)
-    //     })
-    //     }
-    // })
-// function loadMessage(data)
-// {
-//         return new Promise((res,rej)=>{
-//         let div = document.createElement("div");
-//         let p = document.createElement("p");
-//         let span = document.createElement("span");
-//         let name = document.createElement("strong");
-//         name.innerHTML = data.auther
-//         p.innerHTML = data.body
-//         span.innerHTML = data.date
-//         div.appendChild(name);
-//         div.appendChild(p);
-//         div.setAttribute("class","container bg-info message");
-//         div.setAttribute('id','msg')
-//         res(div)
-//         rej(null)
-//     })
-// }
-</script>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <br>
+    <% include footer %>
+        <script>
+            let socket = io.connect()
+            let hold = document.getElementById('hold')
+            const btn = document.getElementById('sendPost')
+            btn.addEventListener('click', () => {
+                let string = document.getElementById('post').value
+                let username = document.getElementById('username').textContent.trim()
+                let data = xssEscape(string);
+                let date = { day: new Date().getDate(), hour: new Date().getHours(), min: new Date().getMinutes() }
+                if (data == '') { return false }
+                socket.emit('post', { data, username: username, date: date })
+                document.querySelector('#post').value = ''
+
+            })
+
+            function like(id) {
+
+                let btnLike = document.getElementById(id)
+                let innerHTML_1 = `<span class="glyphicon glyphicon-thumbs-up"></span> Like <span><%= post.likes %></span>`
+                let innerHTML_2 = `<span class="glyphicon glyphicon-thumbs-down"></span> Unlike <span><%= post.likes %></span>`
+
+                if (btnLike.innerHTML == innerHTML_2) {
+                    console.log('case one')
+                    btnLike.style.backgroundColor = '#f6f6f9'
+                    document.getElementById(id).style.color = 'black'
+                    btnLike.innerHTML = innerHTML_1
+                    return true
+                }
+                console.log('case two')
+                btnLike.style.backgroundColor = '#2962ff'
+                document.getElementById(id).style.color = 'white'
+                btnLike.innerHTML = innerHTML_2
+
+            }
+            
+        </script>
 </body>
+
 </html>
+<!-- <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 panel panel-default">
+        <div class="container-fluied text-left">
+            <h4 class="align-text-top">
+                <%= post.auther %>
+                    <a href="/{{post.id}}/"></a>
+            </h4>
+
+            <div class="container">
+                <p class="well h5 panel-body">
+                    <%= post.body %>
+                </p>
+                <div>
+                    <button type="button" class="btn btn-default btn-sm col-sm-3">
+                        <span class="glyphicon glyphicon-heart" style="color: red"></span> Like
+                    </button>
+                    <button class="btn btn-default btn-sm col-sm-3">comments:
+                        <span class="badge badge-success"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+</div> -->

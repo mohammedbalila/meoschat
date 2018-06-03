@@ -4,7 +4,7 @@
 	<title>Login </title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">	
-	<script src="assests/particles.min.js"></script>
+	<script src="assests/particles.min.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
 	 crossorigin="anonymous">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
@@ -14,7 +14,8 @@
 	<title>Login</title>
 </head>
 <body id="particles-js">	
-	<form class="card m-3" method="POST" action="/login">
+		<%- messages('message', locals) %>
+	<form class="card m-3" method="POST" action="/auth/login">
 		<div class="form-group p-2">
 			<label for="username">User name</label>
 			<input type="text" class="form-control" name="username" id="username" placeholder="User name">
@@ -24,8 +25,8 @@
 				<input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
 			</div>
 			<button type="submit" class="btn btn-primary" style="margin: 5px;">Submit</button>
-			<a href="/register" class="btn-danger" style="padding: 12px;margin: 5px;text-align: center">Create an account</a>
+			<a href="/auth/register" class="btn-danger" style="padding: 12px;margin: 5px;text-align: center">Create an account</a>
 	</form>
 </body>
-<script src="assests/partical-js.js"></script>
+<script src="assests/partical-js.js" type="text/javascript"></script>
 </html>

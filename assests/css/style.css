@@ -1,0 +1,280 @@
+body {
+    transition: all .8s ease-out;
+    font-family: Times, serif,'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+}
+
+
+.topnav {
+    overflow: hidden;
+    background-color: #333;
+  }
+  
+  .topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+  
+  .active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .topnav .icon {
+    display: none;
+  }
+  
+  .dropdown {
+      float: left;
+      overflow: hidden;
+  }
+  
+  .dropdown .dropbtn {
+      font-size: 17px;    
+      border: none;
+      outline: none;
+      color: white;
+      padding: 14px 16px;
+      background-color: inherit;
+      font-family: inherit;
+      margin: 0;
+  }
+  
+  .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+  }
+  
+  .dropdown-content a {
+      float: none;
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+  }
+  
+  .topnav a:hover, .dropdown:hover .dropbtn {
+    background-color: #555;
+    color: white;
+  }
+  
+  .dropdown-content a:hover {
+      background-color: #ddd;
+      color: black;
+  }
+  
+  .dropdown:hover .dropdown-content {
+      display: block;
+  }
+  
+  
+  @media screen and (max-width: 600px) {
+    .topnav.responsive {position: relative;}
+    .topnav.responsive .icon {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .topnav.responsive a {
+      float: none;
+      display: block;
+      text-align: left;
+    }
+    .topnav.responsive .dropdown {float: none;}
+    .topnav.responsive .dropdown-content {position: relative;}
+    .topnav.responsive .dropdown .dropbtn {
+      display: block;
+      width: 100%;
+      text-align: left;
+    }
+  }
+
+.top-list li:hover {
+    color: black;
+    background-color: slategray;
+    transition: all .8s ease-out;
+}
+
+.side-bar {
+    list-style: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    padding: 0;
+    margin: 0;
+    width: 0px;
+    height: 100%;
+    opacity: 0.9;
+    display: none;
+}
+
+.side-bar a {
+    display: block;
+    text-decoration: none;
+    color: antiquewhite;
+    padding: 5px;
+}
+
+.side-bar li:hover {
+    background-color: rgb(62, 157, 201);
+    color: #111;
+    transition: all .8s ease-out;
+}
+
+.side-list {
+    display: grid;
+    grid-template-rows: repeat(1, 1fr);
+    grid-row-gap: 1em;
+    list-style-type: none;
+    width: 20%;
+    height: 100%;
+    background-color: #111;
+    opacity: .9;
+
+}
+
+.btn-dark {
+    border: 1px solid white;
+}
+#message:hover, #message:focus{
+    background-color: white;
+}
+body{
+    font-family: 'Nunito';
+}
+
+h2{
+    font-size: 18px;
+    padding: 10px 20px;
+    color: #575ed8;
+}
+
+.chat-box{
+    max-width: 600px;
+    margin: 30px auto;
+    border: 1px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 2px;
+}
+
+.chat-window{
+    height: 400px;
+    overflow: auto;
+    background: #f9f9f9;
+}
+
+.output p{
+    padding: 14px 0px;
+    margin: 0 20px;
+    border-bottom: 1px solid #e9e9e9;
+    color: #555;
+}
+
+.feedback p{
+    color: #aaa;
+    padding: 14px 0px;
+    margin: 0 20px;
+}
+
+.output strong{
+    color: #111;
+}
+
+label{
+    box-sizing: border-box;
+    display: block;
+    padding: 10px 20px;
+}
+
+input{
+    padding: 10px 20px;
+    box-sizing: border-box;
+    background: #eee;
+    border: 0;
+    display: block;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    font-family: Nunito;
+    font-size: 16px;
+}
+
+button{
+    background: #575ed8;
+    color: #fff;
+    font-size: 18px;
+    border: 0;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 0 0 2px 2px;
+}
+.message{
+  border: 1px solid grey;
+  border-radius: 8px;
+  margin-top: 1%;
+  display: grid;
+  grid-template-columns: 0.2fr 2fr;
+  background: darkcyan;
+}
+.message p {  color: white;}
+.connect {
+    border: 1px #eee solid;
+    border-radius: 2%; 
+}
+.post-container {
+    box-shadow: 6px 6px 3px grey
+}
+.dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}

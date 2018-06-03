@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <% include header %>
+        <title>Setting</title>
+</head>
+<style>
+    .inputfile {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+
+    .inputfile+label {
+        font-size: 1.25em;
+        font-weight: 700;
+        color: white;
+        background-color: black;
+        display: inline-block;
+    }
+
+    .inputfile:focus+label,
+    .inputfile+label:hover {
+        background-color:white;
+        color: #000;
+        border: .5px solid black;
+        box-shadow: 2px 2px grey;
+    }
+
+    .inputfile+label {
+        cursor: pointer;
+        /* "hand" cursor */
+    }
+
+    .inputfile:focus+label {
+        outline: 1px dotted #000;
+        outline: -webkit-focus-ring-color auto 5px;
+    }
+
+    .inputfile+label * {
+        pointer-events: none;
+    }
+</style>
+
+<body>
+    <div class="container m-2">
+        <h4> Account Setting</h4>
+        <ul class="nav flex-column h5">
+            <li class="nav-item" id="user">
+                <span id="passerr"></span>
+                <p class="text-left" onclick="editUser()" style="cursor: pointer;" id="#">Edit Username</p>
+            </li>
+            <li class="nav-item" id="pass">
+                <span id="passerr"></span>
+                <p class="text-left nav-link" onclick="editPass()" style="cursor: pointer;" id="@">Edit Password</p>
+            </li>
+            <!-- <li class="nav-item">
+                <p class="text-left" onclick="window.location = '/activeties'" style="cursor: pointer;">Activeties</p>
+            </li> -->
+        </ul>
+    </div>
+
+    <% include footer %>
+</body>
+<script>
+    function editUser() {
+        let user = document.getElementById("user")
+        let form = document.createElement("form")
+        let input = document.createElement("input")
+        let btn = document.createElement("input")
+        form.setAttribute('class', 'form-group')
+        input.setAttribute('class', 'form-control')
+        input.setAttribute('name', 'username')
+        btn.setAttribute('class', 'btn btn-danger')
+        form.action = "/setting/edit:username"
+        form.method = 'POST'
+        btn.type = 'submit'
+        btn.innerHTML = 'Edit'
+        form.appendChild(input)
+        form.appendChild(btn)
+        user.appendChild(form)
+        document.getElementById('#').disabled = true
+
+    }
+    function editPass() {
+        let user = document.getElementById("pass")
+        let form = document.createElement("form")
+        let $input = document.createElement("input")
+        let input1 = document.createElement("input")
+        let input2 = document.createElement("input")
+        let btn = document.createElement("input")
+        form.setAttribute('class', 'form-group')
+        $input.setAttribute('class', 'form-control')
+        $input.setAttribute('name', 'password')
+        $input.setAttribute('type', 'password')
+        input1.setAttribute('class', 'form-control')
+        input1.setAttribute('name', 'newPassword')
+        input1.setAttribute('type', 'password')
+        input1.setAttribute('id', 'password')
+        input2.setAttribute('class', 'form-control')
+        input2.setAttribute('id', 'password-conf')
+        input2.setAttribute('type', 'password')
+        btn.setAttribute('class', 'btn btn-danger')
+        btn.setAttribute('id', 'sendPass')
+        btn.setAttribute('disabled', 'true')
+        form.action = "/setting/edit:password"
+        form.method = 'POST'
+        btn.type = 'submit'
+        btn.innerHTML = 'Edit'
+        form.appendChild($input)
+        form.appendChild(input1)
+        form.appendChild(input2)
+        form.appendChild(btn)
+        user.appendChild(form)
+        document.getElementById('@').disabled = true
+
+        let pass = document.getElementById('password')
+        let passConf = document.getElementById('password-conf')
+
+        pass.addEventListener('keyup', () => {
+            let s = document.getElementById('passerr')
+            if (pass.value.length < 10) {
+                s.innerHTML = 'password must be at least 10 charachters'
+                s.style.color = 'red'
+            }
+            if (pass.value.length >= 10) {
+                s.innerHTML = 'valid password'
+                s.style.color = 'green'
+            }
+        })
+
+        passConf.addEventListener('keyup', () => {
+            let s = document.getElementById('passerr')
+            if (passConf.value !== pass.value) {
+                s.innerHTML = 'password doesn\'t match'
+                s.style.color = 'red'
+            } else {
+                s.innerHTML = 'valid password'
+                s.style.color = 'green'
+                document.getElementById('sendPass').disabled = false
+            }
+        })
+    }
+    let inputs = document.querySelectorAll('.inputfile');
+    Array.prototype.forEach.call(inputs, function (input) {
+        let label = input.nextElementSibling,
+            labelVal = label.innerHTML;
+
+        input.addEventListener('change', function (e) {
+            let fileName = '';
+            if (this.files && this.files.length > 1)
+                fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
+            else
+                fileName = e.target.value.split('\\').pop();
+
+            if (fileName)
+                label.querySelector('span').innerHTML = fileName;
+            else
+                label.innerHTML = labelVal;
+        });
+    });
+</script>
+</html>

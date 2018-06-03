@@ -12,8 +12,9 @@ const MessageSchema = new Schema({
         required: true
     },
     date: {
-        type:Date,
-        default: new Date()
+        day: {type: Date},
+        hour: {type: Date},
+        min: {type: Date}
     }
 });
 const Message = module.exports = mongoose.model("Message", MessageSchema)
