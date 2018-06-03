@@ -43,6 +43,7 @@ app
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .use('/assests', require("express").static(path.join(__dirname, 'assests')))
+    .use('/auth', require("express").static(path.join(__dirname, 'assests')))
 
 const server = app.listen(port);
 const socket = io(server);
