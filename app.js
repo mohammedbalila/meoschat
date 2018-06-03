@@ -10,6 +10,8 @@ const Post = require('./models/post')
 const io = require("socket.io");
 const passport = require("passport")
 const session = require("express-session")
+const compression = require('compression')
+const helmet = require('helmet')
 const MongoDBSession = require("connect-mongodb-session")(session)
 require("./config/passport")(passport);
 
@@ -42,6 +44,8 @@ const port = process.env.PORT || 3000
 app
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
+    .use(compression())
+    .use(helmet())
     .use('/assests', require("express").static(path.join(__dirname, 'assests')))
     .use('/auth', require("express").static(path.join(__dirname, 'assests')))
 
