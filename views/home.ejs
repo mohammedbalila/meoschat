@@ -60,6 +60,7 @@
     </div>
     <div class="container" id="hold">
         <div class="row">
+            <% if (typeof posts !== undefined) { %>
             <% for (post of posts) { %>
                 <div class="col-xs-12 col-sm-12 col-md-8">
                     <div class="container text-left">
@@ -78,7 +79,7 @@
                     <br>
                 
                 <% } %>
-
+<% } %>
         </div>
     </div>
     <br>
@@ -101,53 +102,7 @@
                 document.querySelector('#post').value = ''
 
             })
-
-            function like(id) {
-
-                let btnLike = document.getElementById(id)
-                let innerHTML_1 = `<span class="glyphicon glyphicon-thumbs-up"></span> Like <span><%= post.likes %></span>`
-                let innerHTML_2 = `<span class="glyphicon glyphicon-thumbs-down"></span> Unlike <span><%= post.likes %></span>`
-
-                if (btnLike.innerHTML == innerHTML_2) {
-                    console.log('case one')
-                    btnLike.style.backgroundColor = '#f6f6f9'
-                    document.getElementById(id).style.color = 'black'
-                    btnLike.innerHTML = innerHTML_1
-                    return true
-                }
-                console.log('case two')
-                btnLike.style.backgroundColor = '#2962ff'
-                document.getElementById(id).style.color = 'white'
-                btnLike.innerHTML = innerHTML_2
-
-            }
-            
         </script>
 </body>
 
 </html>
-<!-- <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 panel panel-default">
-        <div class="container-fluied text-left">
-            <h4 class="align-text-top">
-                <%= post.auther %>
-                    <a href="/{{post.id}}/"></a>
-            </h4>
-
-            <div class="container">
-                <p class="well h5 panel-body">
-                    <%= post.body %>
-                </p>
-                <div>
-                    <button type="button" class="btn btn-default btn-sm col-sm-3">
-                        <span class="glyphicon glyphicon-heart" style="color: red"></span> Like
-                    </button>
-                    <button class="btn btn-default btn-sm col-sm-3">comments:
-                        <span class="badge badge-success"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <br>
-    </div>
-</div> -->
