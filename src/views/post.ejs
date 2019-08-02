@@ -1,0 +1,49 @@
+<% include header %>
+<style>
+    body {background-image:url('{% static "bg3.jpg" %}');
+    background-size:cover;
+            background-attachment: fixed;
+            font-family: Playfair Display;
+            font-size: 16px;}
+    b {
+        position: absolute;
+        background-color: lightgray;
+        right: 0;
+        bottom: 0;
+    }
+    a {
+        text-decoration: none;
+        color: black;
+        display: inline-block;
+
+      }
+      a:hover {
+          color: white;
+          text-decoration: none;
+      }
+      .span {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          font-weight: bold;
+      }
+      #form label{color: #ffffff}
+</style>
+<% for (post of posts) { %>
+<div class="row">
+    <div class="col-sm-3">
+      <div class="well">
+       <p class="h5"><%= post.auther %></p>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div class="well h5">
+        <p><%= post.body %></p>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+<% include footer %>
+
+
+
+

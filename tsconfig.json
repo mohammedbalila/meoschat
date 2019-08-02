@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "outDir": "./build",
+        "module": "commonjs",
+        "lib": [
+            "es5",
+            "es6"
+        ],
+        "target": "es6",
+        "allowJs": true,
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}

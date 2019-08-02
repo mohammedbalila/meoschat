@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <% include header %>
+        <title>Home</title>
+        <style>
+            .wrapper {
+                display: grid;
+                grid-template-rows: 3fr 1fr;
+                grid-gap: .5em;
+            }
+
+            .wrapper-2 {
+                display: grid;
+                grid-template-columns: .5fr 1fr;
+            }
+
+            .center {
+                margin-left: auto;
+            }
+
+            b {
+                position: absolute;
+                background-color: lightgray;
+                right: 0;
+                bottom: 0;
+            }
+
+            a {
+                text-decoration: none;
+                color: black;
+                display: inline-block;
+
+            }
+
+            a:hover {
+                color: white;
+                text-decoration: none;
+            }
+        </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <textarea name="post" id="post" class="form-control" placeholder="What's in your mind ..." style="resize: none"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="sendPost">Post</button>
+                    <input type="text" name="comment">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="hold">
+        <div class="row">
+            <% if (typeof posts !== undefined) { %>
+            <% for (post of posts) { %>
+                <div class="col-xs-12 col-sm-12 col-md-8">
+                    <div class="container text-left">
+                        <h4 class="align-text-top text-info">
+                            <%= post.auther %>
+                        </h4>
+                        <a class="btn btn-default" href="/posts/:<%= post.id %>">
+                            <span class="fas fa-eye"></span>
+                        </a>
+                        <span style="font-family: Playfair Display;font-size: inherit;"> </span>
+                        <div class="well h5">
+                            <p><%= post.body %></p>
+                        </div>
+                        </div>
+                    </div>
+                    <br>
+                
+                <% } %>
+<% } %>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <br>
+    <% include footer %>
+        <script>
+            let socket = io.connect()
+            let hold = document.getElementById('hold')
+            const btn = document.getElementById('sendPost')
+            btn.addEventListener('click', () => {
+                let string = document.getElementById('post').value
+                let username = document.getElementById("usrsNum").textContent.trim()
+                let data = xssEscape(string);
+                let date = { day: new Date().getDate(), hour: new Date().getHours(), min: new Date().getMinutes() }
+                if (data == '') { return false }
+                socket.emit('post', { data, username: username, date: date })
+                document.querySelector('#post').value = ''
+
+            })
+        </script>
+</body>
+
+</html>
