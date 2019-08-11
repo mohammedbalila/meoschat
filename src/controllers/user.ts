@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import passport from "passport";
-import { validationResult } from 'express-validator/check';
-import _ from 'lodash';
-import { User } from '../models/user.model';
+import { validationResult } from "express-validator";
+import _ from "lodash";
+import { User } from "../models/user.model";
 
 export default class UserController {
 
@@ -16,6 +16,7 @@ export default class UserController {
      */
     public static findAll = async (req: Request, res: Response) => {
         try {
+            const username = req.query.username;
             const users = await User.find({}, { password: 0 });
             return res.json({ users });
         } catch (error) {
@@ -30,7 +31,7 @@ export default class UserController {
         const id = req.params.id;
         try {
             const user = await User.findOne({ _id: id }, { password: 0, })
-                .populate({ path: 'cart', select: '_id, books' });
+                .populate({ path: "cart", select: "_id, books" });
             return res.json({ user });
         } catch (error) {
             return res.status(500).json({ error });
@@ -39,14 +40,14 @@ export default class UserController {
 
     /**
      * @description updateOne updates an authenticated user by its id
-     * the id is not required in this fucntion but it's used only for
+     * the id is not required in this fucntion but it"s used only for
      * code consistensy
      */
 
     public static updateOne = async (req: Request, res: Response) => {
         const body = req.body;
         const user = req.user;
-        const updatedFields = _.pick(body, ['email', 'phone', 'points',]);
+        const updatedFields = _.pick(body, ["email", "phone", "points",]);
 
         if (!user) {
             return res.sendStatus(403);
@@ -62,7 +63,7 @@ export default class UserController {
 
     /**
      * @description deleteOne deletes an authenticated user by its id
-     * the id is not required in this fucntion but it's used only for
+     * the id is not required in this fucntion but it"s used only for
      * code consistensy
      */
     public static deleteOne = async (req: Request, res: Response) => {
@@ -86,7 +87,7 @@ export default class UserController {
      * @description login authenticate an exsidting user and generates a jwt
      */
     public static login = async (req: Request, res: Response, next: NextFunction) => {
-        passport.authenticate('local',
+        passport.authenticate("local",
             { session: false }, async (err, user, info) => {
                 if (err) {
                     return next(err);
@@ -100,8 +101,8 @@ export default class UserController {
                     email: user.email,
                     id: user.id,
                 };
-                const toekn = jwt.sign(payload, process.env.JWT_KEY);
-                return res.json({ user, toekn });
+                const token = jwt.sign(payload, process.env.JWT_KEY);
+                return res.json({ user, token });
             })(req, res, next);
 
     }
@@ -111,20 +112,19 @@ export default class UserController {
      */
     public static signup = async (req: Request, res: Response) => {
         const fields = _.pick(req.body, [
-            'username', 'password', 'firstName', 'lastName',
-            'phone', 'dateOfBirth',
+            "username", "password", "dateOfBirth",
         ]);
- 
+        console.log(req.body)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ error: errors.array() });
         }
         try {
             const exsistedUser = await User.findOne({
-                username: fields.username
+                username: fields.username,
             });
             if (exsistedUser) {
-                return res.json(400)
+                return res.status(400)
                     .json({ message: "This email is already in use" });
             }
             const user = await User.create(fields);

@@ -1,5 +1,4 @@
 import express from "express";
-import io from "socket.io";
 import passport from "passport";
 import mongoose from "mongoose";
 import morgan from "morgan";
@@ -7,13 +6,12 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import helmet from "helmet";
 import cors from "cors";
-import lusca from "lusca";
 import router from "./routes";
 import "./config/passport";
 
 const app = express();
 
-mongoose.connect(process.env.DB_URI)
+mongoose.connect(process.env.DB_URI, { useNewUrlParser: true })
     .then(() => {
         // tslint:disable-next-line: no-console
         console.log("Connected to the DB");
@@ -26,8 +24,6 @@ app.use(passport.initialize());
 app.use(compression());
 app.use(helmet());
 app.use(cors());
-app.use(lusca.xframe("SAMEORIGIN"));
-app.use(lusca.xssProtection(true));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("common"));

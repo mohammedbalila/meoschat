@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from 'jsonwebtoken';
-import { validationResult } from 'express-validator/check';
-import _ from 'lodash';
-import { Message } from '../models/message.model';
+import { validationResult } from "express-validator/check";
+import _ from "lodash";
+import { verify } from "jsonwebtoken";
+import { Message } from "../models/message.model";
+import { User } from "../models/user.model";
 
 export default class MessageController {
 
@@ -20,11 +21,75 @@ export default class MessageController {
         }
         try {
             const messages = await Message.find({ user: user.id })
-                .populate('receiver', ['_id, username'], 'User');
+                .populate("receiver", ["_id, username"], "User");
             return res.json({ messages });
         } catch (error) {
             return res.status(500).json({ error });
         }
+    }
+
+    /**
+     * @description getMessagesOverSocket
+     */
+
+    public static async getMessagesSocket(token: string) {
+        try {
+            const strFromToken =  verify(token, process.env.JWT_KEY) as any;
+
+            const user = await User.findById(strFromToken.id);
+            console.log(user, strFromToken);
+            if (!user) { return []; }
+            const messages = await Message.find({ sender: strFromToken.id })
+                .populate("receiver", ["_id, username"], "User");
+            return messages;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    /**
+     * @description getMessagesOverSocket
+     */
+
+    public static async createMessageSocket(token: string, receiverId: string, body: string) {
+        try {
+            const strFromToken =  verify(token, process.env.JWT_KEY) as any;
+
+            const user = await User.findById(strFromToken.id);
+            if (!user) { return {}; }
+            const messages = await Message.create({ sender: strFromToken.id, receiver: receiverId, body });
+            return messages;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    public static async getMessagesWithUserSocket(token: string, receiverId: string) {
+        try {
+            const strFromToken =  verify(token, process.env.JWT_KEY) as any;
+
+            const user = await User.findById(strFromToken.id);
+
+            if (!user) { return []; }
+            const messagesByUser = await Message.find({ sender: strFromToken.id, receiver: receiverId })
+                .populate("receiver", ["_id, username"], "User");
+            const messagesForUser = await Message.find({ sender: receiverId, receiver: strFromToken.id })
+                .populate("receiver", "_id, username", "User");
+            return messagesByUser.concat(messagesForUser);
+        } catch (error) {
+            return error;
+        }
+    }
+
+    /**
+     * @description create creates a message from a use to another user
+     */
+
+    public static createMessage = async (req: Request, res: Response) => {
+        const { receiverId, body } = req.body;
+        const user = req.user;
+        const message = await Message.create({ receiver: receiverId, sender: user.id, body });
+        return res.json({ message });
     }
 
     /**
@@ -38,7 +103,7 @@ export default class MessageController {
         }
         try {
             const messages = await Message.findOne({ user: user.id, receiver: receiverId })
-                .populate('receiver', ['_id, username'], 'User');
+                .populate("receiver", ["_id, username"], "User");
             return res.json({ messages });
         } catch (error) {
             return res.status(500).json({ error });
@@ -51,7 +116,7 @@ export default class MessageController {
     public static updateMessage = async (req: Request, res: Response) => {
         const id = req.params.id;
         const user = req.user;
-        const updateFields = _.pick(req.body, ['body', 'read']);
+        const updateFields = _.pick(req.body, ["body", "read"]);
         if (!user) {
             return res.status(403);
         }
@@ -63,9 +128,9 @@ export default class MessageController {
         }
     }
 
-        /**
-     * @description findOne updates a single message by its id
-     */
+    /**
+ * @description findOne updates a single message by its id
+ */
     public static deleteMessage = async (req: Request, res: Response) => {
         const id = req.params.id;
         const user = req.user;

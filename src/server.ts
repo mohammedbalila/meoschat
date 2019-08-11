@@ -1,10 +1,12 @@
 import app from "./app";
+import socket from "./socket";
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
     // tslint:disable:no-console
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Listing on port ${port}`);
 }).on("error", (e) => {
     console.error(e);
     process.exit(1);
 });
+socket(server);

@@ -6,6 +6,7 @@ export type UserDocument = Document & {
     username: string;
     password: string;
     dateOfBirth: Date;
+    profileImage: string;
     comparePassword: comparePasswordFunction;
 };
 
@@ -24,6 +25,11 @@ const userScheam = new Schema({
     dateOfBirth: {
         type: Date,
         required: true,
+    },
+    profileImage: {
+        type: String,
+        default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTETr9ViMXvaUiHz_Nwq2lYSO94WQJNUuFwiIJhNHKno_wmLolT",
     },
     password: {
         type: String,
@@ -53,4 +59,14 @@ userScheam.pre("save", function (next) {
 
 });
 
-export const User = model<UserDocument>("User", userScheam);
+const User = model<UserDocument>("User", userScheam);
+User.createIndexes((err) => {
+    if (err) {
+        // tslint:disable:no-console
+        console.error(err);
+    } else {
+        console.log("Index was created - User");
+    }
+});
+
+export { User };
