@@ -19,7 +19,6 @@ const userScheam = new Schema({
         type: String,
         minlength: 5,
         required: true,
-        index: true,
         unique: true,
     },
     dateOfBirth: {

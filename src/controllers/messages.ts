@@ -34,14 +34,18 @@ export default class MessageController {
 
     public static async getMessagesSocket(token: string) {
         try {
-            const strFromToken =  verify(token, process.env.JWT_KEY) as any;
+            const strFromToken = verify(token, process.env.JWT_KEY) as any;
 
             const user = await User.findById(strFromToken.id);
-            console.log(user, strFromToken);
+
             if (!user) { return []; }
-            const messages = await Message.find({ sender: strFromToken.id })
-                .populate("receiver", ["_id, username"], "User");
-            return messages;
+            const sent = await Message.find({ sender: strFromToken.id })
+                .populate("receiver", ["_id", "username", "profileImage"], "User");
+            const received = await Message.find({ receiver: strFromToken.id })
+                .populate("sender", ["_id", "username", "profileImage"], "User");
+
+            const messages = _.uniqBy(sent, ["sender"]).concat(_.uniqBy(received, ["receiver"]));
+            return _.sortBy(messages, ["date"]);
         } catch (error) {
             return error;
         }
@@ -53,7 +57,7 @@ export default class MessageController {
 
     public static async createMessageSocket(token: string, receiverId: string, body: string) {
         try {
-            const strFromToken =  verify(token, process.env.JWT_KEY) as any;
+            const strFromToken = verify(token, process.env.JWT_KEY) as any;
 
             const user = await User.findById(strFromToken.id);
             if (!user) { return {}; }
@@ -66,15 +70,17 @@ export default class MessageController {
 
     public static async getMessagesWithUserSocket(token: string, receiverId: string) {
         try {
-            const strFromToken =  verify(token, process.env.JWT_KEY) as any;
+            const strFromToken = verify(token, process.env.JWT_KEY) as any;
 
             const user = await User.findById(strFromToken.id);
 
             if (!user) { return []; }
             const messagesByUser = await Message.find({ sender: strFromToken.id, receiver: receiverId })
-                .populate("receiver", ["_id, username"], "User");
+                .populate("receiver", ["_id, username"], "User")
+                .populate("sender", ["_id", "profileImage"], "User");
             const messagesForUser = await Message.find({ sender: receiverId, receiver: strFromToken.id })
-                .populate("receiver", "_id, username", "User");
+                .populate("receiver", "_id, username", "User")
+                .populate("sender", ["_id", "profileImage"], "User");
             return messagesByUser.concat(messagesForUser);
         } catch (error) {
             return error;
@@ -129,8 +135,8 @@ export default class MessageController {
     }
 
     /**
- * @description findOne updates a single message by its id
- */
+     * @description findOne updates a single message by its id
+     */
     public static deleteMessage = async (req: Request, res: Response) => {
         const id = req.params.id;
         const user = req.user;

@@ -20,7 +20,6 @@ const userScheam = new mongoose_1.Schema({
         type: String,
         minlength: 5,
         required: true,
-        index: true,
         unique: true,
     },
     dateOfBirth: {

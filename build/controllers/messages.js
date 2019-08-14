@@ -24,13 +24,15 @@ class MessageController {
             try {
                 const strFromToken = jsonwebtoken_1.verify(token, process.env.JWT_KEY);
                 const user = yield user_model_1.User.findById(strFromToken.id);
-                console.log(user, strFromToken);
                 if (!user) {
                     return [];
                 }
-                const messages = yield message_model_1.Message.find({ sender: strFromToken.id })
-                    .populate("receiver", ["_id, username"], "User");
-                return messages;
+                const sent = yield message_model_1.Message.find({ sender: strFromToken.id })
+                    .populate("receiver", ["_id", "username", "profileImage"], "User");
+                const received = yield message_model_1.Message.find({ receiver: strFromToken.id })
+                    .populate("sender", ["_id", "username", "profileImage"], "User");
+                const messages = lodash_1.default.uniqBy(sent, ["sender"]).concat(lodash_1.default.uniqBy(received, ["receiver"]));
+                return lodash_1.default.sortBy(messages, ["date"]);
             }
             catch (error) {
                 return error;
@@ -65,9 +67,11 @@ class MessageController {
                     return [];
                 }
                 const messagesByUser = yield message_model_1.Message.find({ sender: strFromToken.id, receiver: receiverId })
-                    .populate("receiver", ["_id, username"], "User");
+                    .populate("receiver", ["_id, username"], "User")
+                    .populate("sender", ["_id", "profileImage"], "User");
                 const messagesForUser = yield message_model_1.Message.find({ sender: receiverId, receiver: strFromToken.id })
-                    .populate("receiver", "_id, username", "User");
+                    .populate("receiver", "_id, username", "User")
+                    .populate("sender", ["_id", "profileImage"], "User");
                 return messagesByUser.concat(messagesForUser);
             }
             catch (error) {
@@ -142,8 +146,8 @@ MessageController.updateMessage = (req, res) => __awaiter(this, void 0, void 0, 
     }
 });
 /**
-* @description findOne updates a single message by its id
-*/
+ * @description findOne updates a single message by its id
+ */
 MessageController.deleteMessage = (req, res) => __awaiter(this, void 0, void 0, function* () {
     const id = req.params.id;
     const user = req.user;

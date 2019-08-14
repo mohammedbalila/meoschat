@@ -11,15 +11,22 @@ import './messages.css';
 class Messages extends React.Component<any, any> {
     state = {
         username: "",
+        messages: [],
         users: []
+    }
+    private token: string | null;
+    constructor(props: any) {
+        super(props);
+        this.token = localStorage.getItem("auth-token");
+        socket.emit("getMessages", { token: this.token });
+        socket.on("getMessages", (data: any) => {
+            this.setState({ messages: data.messages });
+        });
     }
     componentWillMount() {
         this.props.getCurrentUser();
         this.props.getUserMessages();
         this.props.getUsers();
-        socket.emit("getMessages", { token: localStorage.getItem("auth-token") });
-        socket.on("getMessages", (data: any) => {
-        });
     }
 
     componentWillReceiveProps(props: any) {
@@ -29,9 +36,31 @@ class Messages extends React.Component<any, any> {
     link = (text: string, id: string) => {
         return (<Link to={`/messages/${id}`}>{text}</Link>)
     }
+
+    message = (message: any) => {
+        const msgUser = (typeof message.sender === "string") ? message.receiver : message.sender;
+
+        return (
+            <li
+                className="list-group-item d-flex justify-content-between align-items-center"
+            >
+                <div className="d-flex bd-highlight" style={{ cursor: "pointer" }} onClick={this.openMessage.bind(this, msgUser._id)}>
+                    <div className="img_cont">
+                        <img
+                            src={msgUser.profileImage}
+                            className="rounded rounded-circle user_img"
+                        />
+                    </div>
+                    <div className="user_info">
+                        <span style={{ color: "black" }}>{msgUser.username}</span>
+                    </div>
+                </div>
+            </li>
+        );
+    }
     render() {
-        const { users, username } = this.state;
-        if (!this.props.user) {
+        const { users, username, messages } = this.state;
+        if (!this.token) {
             return <Redirect to="/login" />
         }
         return (
@@ -41,7 +70,7 @@ class Messages extends React.Component<any, any> {
                         <div className="card-header">
                             <div className="input-group">
                                 <Autocomplete
-                                    inputProps={{ className: "form-control search", placeholder: "Search..."}}
+                                    inputProps={{ className: "form-control search", placeholder: "Search..." }}
                                     value={username}
                                     items={users.filter((u: any) => u.username.includes(username))}
                                     getItemValue={(item) => item.username}
@@ -59,21 +88,7 @@ class Messages extends React.Component<any, any> {
                         </div>
                         <div className="card-body contacts_body">
                             <ul className="contacts">
-                                <li
-                                    className="list-group-item d-flex justify-content-between align-items-center"
-                                >
-                                    <div className="d-flex bd-highlight" style={{ cursor: "pointer" }} onClick={this.openMessage.bind(this, "y")}>
-                                        <div className="img_cont">
-                                            <img
-                                                src={"https://raddevon.com/wp-content/uploads/2018/10/react.jpg"}
-                                                className="rounded rounded-circle user_img"
-                                            />
-                                        </div>
-                                        <div className="user_info">
-                                            <span style={{ color: "black" }}>Username</span>
-                                        </div>
-                                    </div>
-                                </li>
+                                {messages.map((message: any) => this.message(message))}
                             </ul>
                         </div>
                     </div>
@@ -92,18 +107,18 @@ class Messages extends React.Component<any, any> {
     private onChange = (e: any, username: string) => {
         this.setState({ username });
         if (username.length >= 1) {
-        const filteredUser = this.props.users.filter((user: any) => user.username.includes(username));
-        this.setState({ users: filteredUser });
+            const filteredUser = this.props.users.filter((user: any) => user.username.includes(username));
+            this.setState({ users: filteredUser });
         }
     }
 
     private renderItem = (item: any, isHighlighted: any) => (
         <li
-          className={`${isHighlighted ? 'active' : ''} list-group-item`}
-          key={item._id}
+            className={`${isHighlighted ? 'active' : ''} list-group-item`}
+            key={item._id}
         >{item.username}
         </li>
-      )
+    )
 }
 
 const mapStateToProps = (state: any) => {

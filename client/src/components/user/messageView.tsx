@@ -10,10 +10,13 @@ class MessageView extends Component<any, any> {
     state = {
         messages: [],
         body: "",
-        user: this.initUser, currentUser: this.initUser
+        user: this.initUser, 
+        currentUser: this.initUser
     };
     private token = localStorage.getItem("auth-token");
-    componentWillMount() {
+
+    constructor(props: any) {
+        super(props);
         const { id } = this.props.match.params;
         this.props.getCurrentUser();
         this.props.getUser(id);
@@ -21,21 +24,23 @@ class MessageView extends Component<any, any> {
         socket.on("getMessagesWithUser", (data: { messages: any[] }) => {
             this.setState({ messages: data.messages });
         });
-
     }
 
     componentWillReceiveProps(props: any) {
+        if (props.user) {
         this.setState({ user: props.user, currentUser: props.currentUser });
+        }
     }
     message = (message: any) => {
         const { sender, body, date } = message;
         const { user } = this.props;
+        console.log(message, user)
         const msgDate = new Date(date).toUTCString().split(" ");
-        const clsName = `d-flex justify-content-${sender == user.id ? "start" : "end"} mb-4`;
+        const clsName = `d-flex justify-content-${sender._id === user._id ? "start" : "end"} mb-4`;
         return (
             <div className={clsName}>
                 <div className="img_cont_msg">
-                    <img src={message.receiver.profileImage} className="rounded-circle user_img_msg" />
+                    <img src={message.sender.profileImage} className="rounded-circle user_img_msg" />
                 </div>
                 <div className="msg_cotainer">
                     {body}
@@ -45,18 +50,17 @@ class MessageView extends Component<any, any> {
         );
     }
     render() {
-        const { messages, user } = this.state;
+        const { messages, user = this.initUser } = this.state;
         return (
             <div className="col-md-10 col-xl-8 offset-2 mt-4 chat">
                 <div className="card">
                     <div className="card-header msg_head">
                         <div className="d-flex bd-highlight">
                             <div className="img_cont">
-                                <img src={user.profileImage} className="img responsive"/>
-                                <span className="online_icon"></span>
+                                <img src={user.profileImage} className="img_cont rounded-circle" width="50" height="50"/>
                             </div>
                             <div className="user_info">
-                                <span>{user.username}</span>
+                                <h4>{user.username}</h4>
                                 <p>{messages.length} Messages</p>
                             </div>
                             <div className="video_cam">
@@ -85,6 +89,7 @@ class MessageView extends Component<any, any> {
                             <textarea
                                 className="form-control type_msg"
                                 placeholder="Type your message..."
+                                value={this.state.body}
                                 onChange={(e: any) => this.setState({ body: e.target.value })}
                             >
                             </textarea>
@@ -106,9 +111,8 @@ class MessageView extends Component<any, any> {
         const { id } = this.props.match.params;
         const { currentUser } = this.props;
         socket.emit("newMessage", { token: this.token, body: this.state.body, receiverId: id, sender: currentUser.id });
-        socket.on("getMessagesWithUser", (data: { messages: any[] }) => {
-            this.setState({ messages: data.messages, body: "" });
-        });
+        socket.emit("getMessagesWithUser", { token: this.token, receiverId: id });
+        this.setState({ body: "" });
     }
 }
 
@@ -116,7 +120,6 @@ const mapStateToProps = (state: any) => {
     const currentUser = state.auth.user;
     const { messages } = state.messages;
     const { user } = state.users;
-    console.log(state.users);
     return { currentUser, messages, user };
 }
 
