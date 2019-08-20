@@ -39,7 +39,8 @@
     "req-flash": "0.0.3",
     "socket.io": "^2.2.0",
     "xss-escape": "0.0.6",
-    "ts-node": "*"
+    "ts-node": "*",
+    "typescript": "^3.5.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -68,7 +69,6 @@
     "jest": "^24.7.1",
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "tslint": "^5.18.0"
   }
 }
