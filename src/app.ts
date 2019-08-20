@@ -28,8 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("common"));
 
-const assetsDir = "../assets";
-app.use(express.static(assetsDir));
+app.use("/", express.static("assests"));
 app.use("/api", router);
 
 export default app;

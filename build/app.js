@@ -29,8 +29,7 @@ app.use(cors_1.default());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(morgan_1.default("common"));
-const assetsDir = "../assets";
-app.use(express_1.default.static(assetsDir));
+app.use("/", express_1.default.static("assests"));
 app.use("/api", routes_1.default);
 exports.default = app;
 /*

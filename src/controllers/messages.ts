@@ -40,12 +40,14 @@ export default class MessageController {
 
             if (!user) { return []; }
             const sent = await Message.find({ sender: strFromToken.id })
-                .populate("receiver", ["_id", "username", "profileImage"], "User");
+                .populate("receiver", ["_id", "username", "profileImage"], "User")
+                .sort({ date: -1 });
             const received = await Message.find({ receiver: strFromToken.id })
-                .populate("sender", ["_id", "username", "profileImage"], "User");
+                .populate("sender", ["_id", "username", "profileImage"], "User")
+                .sort({ date: -1 });
 
             const messages = _.uniqBy(sent, ["sender"]).concat(_.uniqBy(received, ["receiver"]));
-            return _.sortBy(messages, ["date"]);
+            return messages;
         } catch (error) {
             return error;
         }
@@ -77,10 +79,12 @@ export default class MessageController {
             if (!user) { return []; }
             const messagesByUser = await Message.find({ sender: strFromToken.id, receiver: receiverId })
                 .populate("receiver", ["_id, username"], "User")
-                .populate("sender", ["_id", "profileImage"], "User");
+                .populate("sender", ["_id", "profileImage"], "User")
+                .sort({ date: -1 });
             const messagesForUser = await Message.find({ sender: receiverId, receiver: strFromToken.id })
                 .populate("receiver", "_id, username", "User")
-                .populate("sender", ["_id", "profileImage"], "User");
+                .populate("sender", ["_id", "profileImage"], "User")
+                .sort({ date: -1 });
             return messagesByUser.concat(messagesForUser);
         } catch (error) {
             return error;

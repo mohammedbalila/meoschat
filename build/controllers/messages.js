@@ -28,11 +28,13 @@ class MessageController {
                     return [];
                 }
                 const sent = yield message_model_1.Message.find({ sender: strFromToken.id })
-                    .populate("receiver", ["_id", "username", "profileImage"], "User");
+                    .populate("receiver", ["_id", "username", "profileImage"], "User")
+                    .sort({ date: -1 });
                 const received = yield message_model_1.Message.find({ receiver: strFromToken.id })
-                    .populate("sender", ["_id", "username", "profileImage"], "User");
+                    .populate("sender", ["_id", "username", "profileImage"], "User")
+                    .sort({ date: -1 });
                 const messages = lodash_1.default.uniqBy(sent, ["sender"]).concat(lodash_1.default.uniqBy(received, ["receiver"]));
-                return lodash_1.default.sortBy(messages, ["date"]);
+                return messages;
             }
             catch (error) {
                 return error;
@@ -68,10 +70,12 @@ class MessageController {
                 }
                 const messagesByUser = yield message_model_1.Message.find({ sender: strFromToken.id, receiver: receiverId })
                     .populate("receiver", ["_id, username"], "User")
-                    .populate("sender", ["_id", "profileImage"], "User");
+                    .populate("sender", ["_id", "profileImage"], "User")
+                    .sort({ date: -1 });
                 const messagesForUser = yield message_model_1.Message.find({ sender: receiverId, receiver: strFromToken.id })
                     .populate("receiver", "_id, username", "User")
-                    .populate("sender", ["_id", "profileImage"], "User");
+                    .populate("sender", ["_id", "profileImage"], "User")
+                    .sort({ date: -1 });
                 return messagesByUser.concat(messagesForUser);
             }
             catch (error) {
